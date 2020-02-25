@@ -1,0 +1,35 @@
+plugins {
+    id 'java-library'
+    id "maven-publish"
+}
+
+ext {
+    junitJupiterVersion = "5.5.2"
+}
+
+description = ""
+group = "io.protop.calver"
+version = "2020.2.23.1-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+//    implementation "com.google.guava:guava:28.1-jre"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        jarModule(MavenPublication) {
+            from components.java
+        }
+    }
+}
