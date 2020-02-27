@@ -1,23 +1,27 @@
 plugins {
     id 'java-library'
     id "maven-publish"
+    id "signing"
 }
+
+group = "io.protop.calver"
+version = "2020.2.26.1"
 
 ext {
     junitJupiterVersion = "5.5.2"
+    isReleaseVersion = !version.endsWith("SNAPSHOT")
 }
 
-description = ""
-group = "io.protop.calver"
-version = "2020.2.23.1-SNAPSHOT"
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-//    implementation "com.google.guava:guava:28.1-jre"
-
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
 }
@@ -26,10 +30,71 @@ test {
     useJUnitPlatform()
 }
 
+tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
+}
+
 publishing {
     publications {
-        jarModule(MavenPublication) {
+        mavenJava(MavenPublication) {
+            artifactId = "calver"
             from components.java
+
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+
+            pom {
+                name = "CalVer"
+                description = "A library for parsing and manipulating Calendar Versions."
+                url = "https://github.com/protop-io/calver"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "jefferyshivers"
+                        name = "Jeffery Shivers"
+                        email = "jeffery@protop.io"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/protop-io/calver.git"
+                    developerConnection = 'scm:git:ssh://github.com/protop-io/calver.git'
+                    url = "https://github.com/protop-io/calver"
+                }
+            }
         }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+        }
+    }
+}
+
+// https://docs.gradle.org/current/userguide/signing_plugin.html#signing_plugin
+signing {
+    sign publishing.publications.mavenJava
+}
+
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption("html5", true)
     }
 }

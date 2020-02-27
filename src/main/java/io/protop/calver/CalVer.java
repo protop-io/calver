@@ -1,38 +1,57 @@
 package io.protop.calver;
 
-import io.protop.calver.scheme.Scheme;
-import io.protop.calver.utils.StringUtils;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * A calendar version library based on the <a href="https://calver.org">specs</a>.
+ * Calendar version object based on the <a href="https://calver.org">specs</a>.
  *
- * A generic is provided for a {@Link Scheme} type for convenience, but in most cases probably not necessary.
+ * @param <T> {@link Scheme} or subclass.
  */
-public class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
+public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
 
     private final T scheme;
     private final List<String> segments;
 
+    // hidden
+    private CalVer() {this(null,null);}
+
     /**
-     * Construct an instance with valid version strings.
-     * @param scheme
-     * @param segments
+     * Construct an instance with valid version strings. This is private so as to enforce
+     *
+     * @param scheme a valid scheme.
+     * @param segments string segments.
      */
     private CalVer(T scheme, List<String> segments) {
         this.scheme = scheme;
         this.segments = segments;
     }
 
+    /**
+     * Get the scheme for this instance.
+     *
+     * @return the scheme.
+     */
     public Scheme getScheme() {
         return scheme;
     }
 
+    /**
+     * Retrieve the version segments.
+     *
+     * @return a copy of the internal list of segments.
+     */
     public List<String> getSegments() {
-        return segments;
+        return new ArrayList<>(segments);
     }
 
+    /**
+     * Compares versions via segments (in order), returning the result of the first segment with a non-zero result, or
+     * else zero.
+     *
+     * The comparison does not include modifiers (any segments <i>not</i> not indicated in the {@link Scheme}.
+     */
     @Override
     public int compareTo(CalVer<T> other) {
         List<String> otherSegments = other.getSegments();
@@ -45,16 +64,33 @@ public class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
         return 0;
     }
 
+    /**
+     * Generates a string composed of the segments in order, joined by a <code>.</code>.
+     */
     @Override
     public String toString() {
         return String.join(".", segments);
     }
 
+    /**
+     * Convenience method to parse a new instance; simply wraps <code>Parser.parse(String)</code>.
+     *
+     * @param scheme the intended scheme.
+     * @param value raw version string.
+     * @param <S> {@link Scheme} or subclass.
+     * @return the parsed {@link CalVer} instance.
+     * @throws InvalidVersionString if string is not valid.
+     */
     public static <S extends Scheme> CalVer valueOf(S scheme, String value)
             throws InvalidVersionString {
         return new Parser<>(scheme).parse(value);
     }
 
+    /**
+     * The (currently only) mechanism for creating an instance of {@link CalVer}.
+     *
+     * @param <S> {@link Scheme} or subclass.
+     */
     public static class Parser<S extends Scheme> {
 
         private final S scheme;
@@ -64,9 +100,10 @@ public class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
         }
 
         /**
-         * Validate the given version string, and, from it, construct a new {@link CalVer<S>} instance.
+         * Validate the given version string, and, from it, construct a new {@link CalVer} instance.
+         *
          * @param value raw version string.
-         * @return a valid instance of {@link CalVer<S>}
+         * @return a valid instance of {@link CalVer}
          * @throws InvalidVersionString if it is invalid/un-parsable in any way.
          */
         public CalVer<S> parse(final String value) throws InvalidVersionString {
