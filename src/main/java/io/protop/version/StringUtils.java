@@ -1,4 +1,4 @@
-package io.protop.calver;
+package io.protop.version;
 
 import java.util.Objects;
 

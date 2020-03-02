@@ -4,8 +4,8 @@ plugins {
     id "signing"
 }
 
-group = "io.protop.calver"
-version = "2020.2.26.1"
+group = "io.protop.version"
+version = "2020.3.1.1"
 
 ext {
     junitJupiterVersion = "5.5.2"
@@ -34,10 +34,14 @@ tasks.withType(Sign) {
     onlyIf { isReleaseVersion }
 }
 
+// publish with -Dorg.gradle.internal.publish.checksums.insecure
+// because: https://github.com/gradle/gradle/issues/11308
+// and: https://issues.sonatype.org/browse/OSSRH-53267
+// https://docs.gradle.org/6.0.1/release-notes.html
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifactId = "calver"
+            artifactId = "version"
             from components.java
 
             versionMapping {
@@ -50,9 +54,9 @@ publishing {
             }
 
             pom {
-                name = "CalVer"
-                description = "A library for parsing and manipulating Calendar Versions."
-                url = "https://github.com/protop-io/calver"
+                name = "Version"
+                description = "A library for parsing and manipulating Versions."
+                url = "https://github.com/protop-io/version"
                 licenses {
                     license {
                         name = "The Apache License, Version 2.0"
@@ -67,9 +71,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = "scm:git:git://github.com/protop-io/calver.git"
-                    developerConnection = 'scm:git:ssh://github.com/protop-io/calver.git'
-                    url = "https://github.com/protop-io/calver"
+                    connection = "scm:git:git://github.com/protop-io/version.git"
+                    developerConnection = 'scm:git:ssh://github.com/protop-io/version.git'
+                    url = "https://github.com/protop-io/version"
                 }
             }
         }

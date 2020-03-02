@@ -1,21 +1,21 @@
-package io.protop.calver;
+package io.protop.version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Calendar version object based on the <a href="https://calver.org">specs</a>.
+ * Version object.
  *
  * @param <T> {@link Scheme} or subclass.
  */
-public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
+public final class Version<T extends Scheme> implements Comparable<Version<T>> {
 
     private final T scheme;
     private final List<String> segments;
 
-    // hidden
-    private CalVer() {this(null,null);}
+    // no op
+    private Version() {this(null,null);}
 
     /**
      * Construct an instance with valid version strings. This is private so as to enforce
@@ -23,7 +23,7 @@ public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
      * @param scheme a valid scheme.
      * @param segments string segments.
      */
-    private CalVer(T scheme, List<String> segments) {
+    private Version(T scheme, List<String> segments) {
         this.scheme = scheme;
         this.segments = segments;
     }
@@ -53,7 +53,7 @@ public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
      * The comparison does not include modifiers (any segments <i>not</i> not indicated in the {@link Scheme}.
      */
     @Override
-    public int compareTo(CalVer<T> other) {
+    public int compareTo(Version<T> other) {
         List<String> otherSegments = other.getSegments();
         for (int i = 0; i < scheme.getSegments().size(); i++) {
             int comparison = segments.get(i).compareTo(otherSegments.get(i));
@@ -78,16 +78,16 @@ public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
      * @param scheme the intended scheme.
      * @param value raw version string.
      * @param <S> {@link Scheme} or subclass.
-     * @return the parsed {@link CalVer} instance.
+     * @return the parsed {@link Version} instance.
      * @throws InvalidVersionString if string is not valid.
      */
-    public static <S extends Scheme> CalVer valueOf(S scheme, String value)
+    public static <S extends Scheme> Version valueOf(S scheme, String value)
             throws InvalidVersionString {
         return new Parser<>(scheme).parse(value);
     }
 
     /**
-     * The (currently only) mechanism for creating an instance of {@link CalVer}.
+     * The (currently only) mechanism for creating an instance of {@link Version}.
      *
      * @param <S> {@link Scheme} or subclass.
      */
@@ -100,13 +100,13 @@ public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
         }
 
         /**
-         * Validate the given version string, and, from it, construct a new {@link CalVer} instance.
+         * Validate the given version string, and, from it, construct a new {@link Version} instance.
          *
          * @param value raw version string.
-         * @return a valid instance of {@link CalVer}
+         * @return a valid instance of {@link Version}
          * @throws InvalidVersionString if it is invalid/un-parsable in any way.
          */
-        public CalVer<S> parse(final String value) throws InvalidVersionString {
+        public Version<S> parse(final String value) throws InvalidVersionString {
             if (StringUtils.isNullOrEmpty(value)) {
                 throw new InvalidVersionString("Version string is blank.");
             }
@@ -134,7 +134,7 @@ public final class CalVer<T extends Scheme> implements Comparable<CalVer<T>> {
                 }
             }
 
-            return new CalVer<>(scheme, segments);
+            return new Version<>(scheme, segments);
         }
     }
 }

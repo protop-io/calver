@@ -1,4 +1,4 @@
-package io.protop.calver;
+package io.protop.version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
- * Represent a calendar version scheme. A scheme comprises any number of segments which contain regular expressions that
+ * Represent a version scheme. A scheme comprises any number of segments which contain regular expressions that
  * should be matched by corresponding segments of a version string.
  *
  * A scheme is never parsed from a version string; it must be constructed explicitly.

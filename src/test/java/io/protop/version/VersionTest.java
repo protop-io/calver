@@ -1,8 +1,8 @@
-package io.protop.calver;
+package io.protop.version;
 
 import org.junit.jupiter.api.Test;
 
-class CalVerTest {
+class VersionTest {
 
     @Test
     void testCompareTo() {

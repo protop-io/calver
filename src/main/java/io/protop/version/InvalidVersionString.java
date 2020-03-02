@@ -1,4 +1,4 @@
-package io.protop.calver;
+package io.protop.version;
 
 /**
  * Thrown when a string cannot be evaluated as a calendar version.
