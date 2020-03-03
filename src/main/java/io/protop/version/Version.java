@@ -1,5 +1,8 @@
 package io.protop.version;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,6 +70,7 @@ public final class Version<T extends Scheme> implements Comparable<Version<T>> {
     /**
      * Generates a string composed of the segments in order, joined by a <code>.</code>.
      */
+    @JsonValue
     @Override
     public String toString() {
         return String.join(".", segments);
